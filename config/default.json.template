@@ -1,0 +1,10 @@
+{
+  "General": {
+    "server": {
+      "name": "case_dist_server",
+      "version": "1.0.0",
+      "port": 9911
+    }
+  }
+}
+
