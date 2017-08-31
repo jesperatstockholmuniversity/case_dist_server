@@ -19,7 +19,7 @@ $ exit
 ### Try the database access
 $ psql -d case_dist_server -U case_dist_server_user -W
 $ \q
-## If this does not work due to "FATAL: Peer authentication....", try:
+### If this does not work due to "FATAL: Peer authentication....", try:
 $ psql -U someuser -h 127.0.0.1 database 
 
 ## Seed the database
