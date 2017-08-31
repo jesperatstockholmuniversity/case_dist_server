@@ -15,6 +15,11 @@ server.get('/echo/:name', function (req, res, next) {
   return next();
 });
 
+server.get('/ip', function (req, res, next) {
+  res.send("You're calling from: " + req.connection.remoteAddress);
+  return next();
+});
+
 server.get('/dist/:uuid', function (req, res, next) {
   db.any("SELECT case_name FROM vm_case WHERE vm_id = (SELECT id FROM vm WHERE uuid = $1)", req.params.uuid)
     .then(data => {
