@@ -17,7 +17,7 @@ $ \q
 $ exit
 
 ### Try the database access
-$ psql -d case_dist_server -U case_dist_server_usesr -W
+$ psql -d case_dist_server -U case_dist_server_user -W
 $ \q
 
 ## Seed the database
