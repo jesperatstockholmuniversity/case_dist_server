@@ -12,7 +12,7 @@
       "port": 5432,
       "database": "case_dist_server",
       "user": "case_dist_server_user",
-      "pass": "{ADD_YOUR_PASSWORD_HERE}"
+      "password": "ADD_YOUR_PASSWORD_HERE"
     }
   }
 }

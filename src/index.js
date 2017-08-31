@@ -16,12 +16,11 @@ server.get('/echo/:name', function (req, res, next) {
 });
 
 server.get('/dist/:uuid', function (req, res, next) {
-
-  db.any('select * from vm where uuid = $1', req.params.uuid)
+  db.any("SELECT * FROM vm_case WHERE vm_id = (SELECT id FROM vm WHERE uuid = $1)", req.params.uuid)
     .then(data => {
         console.log('DATA:', data); // print data;
         res.send(data);
-        return data[0];
+        return data;
     })
     .catch(error => {
         console.log('ERROR:', error); // print the error;
