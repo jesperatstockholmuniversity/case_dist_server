@@ -20,3 +20,6 @@ $ exit
 $ psql -d case_dist_server -U case_dist_server_usesr -W
 $ \q
 
+## Seed the database
+$ sudo su postgres
+$ psql case_dist_server < database_seeds/postgres/seed.sql
