@@ -1,7 +1,10 @@
 var config  = require('config');
 var restify = require('restify');
+var promise = require('bluebird');
+var pgp     = require('pg-promise')({promiseLib: promise});
 
 const server = restify.createServer(config.get('General.server'));
+const db = pgp(config.get('Database.postgres'));
 
 server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser());

@@ -5,6 +5,15 @@
       "version": "1.0.0",
       "port": 9911
     }
+  },
+  "Database": {
+    "postgres": {
+      "host": "localhost",
+      "port": 5432,
+      "database": "case_dist_server",
+      "user": "case_dist_server_user",
+      "pass": "{ADD_YOUR_PASSWORD_HERE}"
+    }
   }
 }
 
