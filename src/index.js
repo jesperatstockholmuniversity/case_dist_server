@@ -15,24 +15,19 @@ server.get('/echo/:name', function (req, res, next) {
   return next();
 });
 
-server.get('/dist/:id', function (req, res, next) {
-  // Retrieve a vm distribution for id...
-  var distribution = {
-    id: "0970c5dce098d3455f5c9c7ecdb75c4d0ddea46d1740aa51a7020066961d42f4",
-    cases: [
-      {
-        name: "Hacker"
-      },
-      {
-        name: "DDOS"
-      },
-      {
-        name: "MySQL_Injection"
-      },
-    ]
-  };
+server.get('/dist/:uuid', function (req, res, next) {
+
+  db.any('select * from vm where uuid = $1', req.params.uuid)
+    .then(data => {
+        console.log('DATA:', data); // print data;
+        res.send(data);
+        return data[0];
+    })
+    .catch(error => {
+        console.log('ERROR:', error); // print the error;
+        res.send(error);
+    });
   
-  res.send(distribution);
   return next();
 });
 
