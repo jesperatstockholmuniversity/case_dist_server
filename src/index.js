@@ -35,9 +35,16 @@ server.get('/dist/:uuid', function (req, res, next) {
 });
 
 server.post('/dist/:uuid', function (req, res, next) {
+  var vm_id = -1;
   db.query("INSERT INTO vm(uuid) VALUES ($1)", req.params.uuid)
     .then(data => {
-      console.log('DATA:', data); // print data;
+      return db.query("SELECT * FROM vm WHERE uuid = $1", req.params.uuid);
+    })
+    .then(data => {
+      vm_id = data[0].id;
+      req.body.forEach(function(row) {
+        db.query("INSERT INTO vm_case(vm_id, case_name) VALUES ($1, $2)", [vm_id, row.case_name]);
+      });
       res.send(data);
       return data;
     })

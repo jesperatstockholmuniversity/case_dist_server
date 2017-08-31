@@ -26,5 +26,11 @@ $ psql -U someuser -h 127.0.0.1 database
 $ sudo su postgres
 $ psql case_dist_server < database_seeds/postgres/seed.sql
 
-## Example curl command for POSTing
-curl -H 'Content-Type: application/json' -X POST -d '[{"case_name":"Hacker"}, {"case_name":"DDOS"}]' http://localhost:9911/dist/123
+
+# Playing with curl
+
+## Example of notifying the Case Distribution Server about a new VM (10.11.11.171).
+$ curl -H 'Content-Type: application/json' -X POST -d '[{"case_name":"Hacker"}, {"case_name":"DDOS"}]' http://localhost:9911/dist/10.11.11.171
+
+## Example of retrieving the distribution of a specific VM (10.11.11.171).
+$ curl http://localhost:9911/dist/10.11.11.171
