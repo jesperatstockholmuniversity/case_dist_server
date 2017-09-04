@@ -48,13 +48,13 @@ server.get('/dist/:uuid', function (req, res, next) {
         res.send(404, 'Distribution not found');
         return next();
       }
-      console.log('- Distribution: ', data);
-      res.send(200, data);
-      return data;
+      console.log('- Success');
+      res.send(200, 'Success');
     })
     .catch(error => {
       console.log('- Unexpected error occurred', error);
       res.send(500, error);
+      return next();
     });
 
   return next();
@@ -78,7 +78,7 @@ server.post('/dist/:uuid', function (req, res, next) {
   }
   if (!Array.isArray(req.body)) {
     console.log(400, '- Request body is not an array.');
-    res.send(400, 'Request body is not an array.');11
+    res.send(400, 'Request body is not an array.');
     return next();
   }
   if (req.body.length == 0) {
@@ -87,25 +87,24 @@ server.post('/dist/:uuid', function (req, res, next) {
     return next();
   }
   if (req.body.length != 0) {
-    var chain = Promise.resolve()
-    req.body.forEach(function(row){
-      chain = chain.then(function(){
-        if (!row.case_name) {
-          throw '- Request body array item missing property "case_name"';
-        }
-        if (typeof row.case_name != 'string') {
-          throw '- Request body array item property "case_name" is not a "string".';
-        }
-        if (row.case_name.length == 0) {
-          throw '- Request body array item property "case_name" is empty.';
-        }
-      })
-    });
-    chain.catch(function(error) {
-      console.log(400, error);
-      res.send(400, error);
-      return next();
-    });
+    for(var i = 0; i < req.body.length; i++) {
+      var row = req.body[i];
+      if (!row.case_name) {
+        console.log('- Request body array item missing property "case_name"');
+        res.send(400, '- Request body array item missing property "case_name"');
+        return next();
+      }
+      if (typeof row.case_name != 'string') {
+        console.log('- Request body array item property "case_name" is not a "string".');
+        res.send(400, '- Request body array item property "case_name" is not a "string".');
+        return next();
+      }
+      if (row.case_name.length == 0) {
+        console.log('- Request body array item property "case_name" is empty.');
+        res.send(400, '- Request body array item property "case_name" is empty.');
+        return next();
+      }
+    }
   }
 
   // Notify console/log about the uuid
@@ -124,12 +123,13 @@ server.post('/dist/:uuid', function (req, res, next) {
       distribution.forEach(function(row) {
         db.query('INSERT INTO vm_case(vm_id, case_name) VALUES ($1, $2)', [vm_id, row.case_name]);
       });
-      res.send(200, data);
-      return data;
+      console.log('- Success');
+      res.send(200, 'Success');
     })
     .catch(error => {
-      console.log('ERROR:', error);
-      res.send(error);
+      console.log('- Unexpected error occurred', error);
+      res.send(400, error);
+      return next();
     });
 
   return next();
@@ -153,12 +153,13 @@ server.del('/dist/:uuid', function (req, res, next) {
   // Perform request
   db.query('DELETE FROM vm WHERE uuid = $1', req.params.uuid)
     .then(data => {
-      res.send(200, data);
-      return data;
+      console.log('- Success');
+      res.send(200, 'Success');
     })
     .catch(error => {
-      console.log('ERROR:', error);
-      res.send(error);
+      console.log('- Unexpected error occurred', error);
+      res.send(400, error);
+      return next();
     });
 
   return next();
