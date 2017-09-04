@@ -145,7 +145,7 @@ describe('Testing the REST API', function() {
   });
 
 
-  it('should delete an existing distribution from the database', function(done) {
+  it('should fail to delete a non-existing distribution from the database', function(done) {
     request({
       url: hostname+'/dist/test-uuid',
       method: 'DELETE'
