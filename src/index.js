@@ -47,7 +47,7 @@ server.get('/seed', function (req, res, next) {
     if (error.errno == -2) {
       error = "Make sure that your config contained the absolute path to the database seed file."
     }
-    
+
     console.log('-', error);
     res.send(500, {status: 'Error', message: error});
   }
@@ -121,17 +121,17 @@ server.post('/dist/:uuid', function (req, res, next) {
       var row = req.body[i];
       if (!row.case_name) {
         console.log('- Request body array item missing property "case_name"');
-        res.send(400, {status: 'Error', message: '- Request body array item missing property "case_name"'});
+        res.send(400, {status: 'Error', message: 'Request body array item missing property "case_name"'});
         return next();
       }
       if (typeof row.case_name != 'string') {
         console.log('- Request body array item property "case_name" is not a "string".');
-        res.send(400, {status: 'Error', message: '- Request body array item property "case_name" is not a "string".'});
+        res.send(400, {status: 'Error', message: 'Request body array item property "case_name" is not a "string".'});
         return next();
       }
       if (row.case_name.length == 0) {
         console.log('- Request body array item property "case_name" is empty.');
-        res.send(400, {status: 'Error', message: '- Request body array item property "case_name" is empty.'});
+        res.send(400, {status: 'Error', message: 'Request body array item property "case_name" is empty.'});
         return next();
       }
     }
