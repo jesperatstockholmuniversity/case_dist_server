@@ -33,7 +33,7 @@ server.get('/dist/:uuid', function (req, res, next) {
   // Verify input parameters
   if (!req.params.uuid) {
     console.log(400, '- Parameter "uuid" missing.');
-    res.send(400, 'Parameter "uuid" missing.');
+    res.send(400, {status: 'Error', message: 'Parameter "uuid" missing.'});
     return next();
   }
 
@@ -45,15 +45,15 @@ server.get('/dist/:uuid', function (req, res, next) {
     .then(data => {
       if (data.length == 0) {
         console.log('- Distribution not found');
-        res.send(404, 'Distribution not found');
+        res.send(404, {status: 'Error', message: 'Distribution not found'});
         return next();
       }
       console.log('- Success');
-      res.send(200, 'Success');
+      res.send(200, {status: 'Success', message: data});
     })
     .catch(error => {
-      console.log('- Unexpected error occurred', error);
-      res.send(500, error);
+      console.log('-', error);
+      res.send(500, {status: 'Error', message: error});
       return next();
     });
 
@@ -68,22 +68,22 @@ server.post('/dist/:uuid', function (req, res, next) {
   // Verify input parameters
   if (!req.params.uuid) {
     console.log(400, '- Parameter "uuid" missing.');
-    res.send(400, 'Parameter "uuid" missing.');
+    res.send(400, {status: 'Error', message: 'Parameter "uuid" missing.'});
     return next();
   }
   if (!req.body) {
     console.log(400, '- Request body missing.');
-    res.send(400, 'Request body missing.');
+    res.send(400, {status: 'Error', message: 'Request body missing.'});
     return next();
   }
   if (!Array.isArray(req.body)) {
     console.log(400, '- Request body is not an array.');
-    res.send(400, 'Request body is not an array.');
+    res.send(400, {status: 'Error', message: 'Request body is not an array.'});
     return next();
   }
   if (req.body.length == 0) {
     console.log(400, '- Request body array empty (length zero).');
-    res.send(400, 'Request body array empty (length zero).');
+    res.send(400, {status: 'Error', message: 'Request body array empty (length zero).'});
     return next();
   }
   if (req.body.length != 0) {
@@ -91,17 +91,17 @@ server.post('/dist/:uuid', function (req, res, next) {
       var row = req.body[i];
       if (!row.case_name) {
         console.log('- Request body array item missing property "case_name"');
-        res.send(400, '- Request body array item missing property "case_name"');
+        res.send(400, {status: 'Error', message: '- Request body array item missing property "case_name"'});
         return next();
       }
       if (typeof row.case_name != 'string') {
         console.log('- Request body array item property "case_name" is not a "string".');
-        res.send(400, '- Request body array item property "case_name" is not a "string".');
+        res.send(400, {status: 'Error', message: '- Request body array item property "case_name" is not a "string".'});
         return next();
       }
       if (row.case_name.length == 0) {
         console.log('- Request body array item property "case_name" is empty.');
-        res.send(400, '- Request body array item property "case_name" is empty.');
+        res.send(400, {status: 'Error', message: '- Request body array item property "case_name" is empty.'});
         return next();
       }
     }
@@ -132,11 +132,11 @@ server.post('/dist/:uuid', function (req, res, next) {
         db.query('INSERT INTO vm_case(vm_id, case_name) VALUES ($1, $2)', [vm_id, row.case_name]);
       });
       console.log('- Success');
-      res.send(200, 'Success');
+      res.send(200, {status: 'Success', message: ''});
     })
     .catch(error => {
       console.log('-', error);
-      res.send(400, error);
+      res.send(400, {status: 'Error', message: error});
       return next();
     });
 
@@ -151,7 +151,7 @@ server.del('/dist/:uuid', function (req, res, next) {
   // Verify input parameters
   if (!req.params.uuid) {
     console.log(400, '- Parameter "uuid" missing.');
-    res.send(400, 'Parameter "uuid" missing.');
+    res.send(400, {status: 'Error', message: 'Parameter "uuid" missing.'});
     return next();
   }
 
@@ -169,11 +169,11 @@ server.del('/dist/:uuid', function (req, res, next) {
     })
     .then(data => {
       console.log('- Success');
-      res.send(200, 'Success');
+      res.send(200, {status: 'Success', message: ''});
     })
     .catch(error => {
       console.log('-', error);
-      res.send(400, error);
+      res.send(400, {status: 'Error', message: error});
       return next();
     });
 
