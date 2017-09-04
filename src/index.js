@@ -11,50 +11,155 @@ server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
 
 server.get('/echo/:name', function (req, res, next) {
-  res.send(req.params);
+  res.send(200, req.params);
   return next();
 });
 
 server.get('/ip', function (req, res, next) {
-  res.send("You're calling from: " + req.connection.remoteAddress);
+  res.send(200, 'You\'re calling from: ' + req.connection.remoteAddress);
   return next();
 });
 
 server.get('/dist/:uuid', function (req, res, next) {
-  db.any("SELECT case_name FROM vm_case WHERE vm_id = (SELECT id FROM vm WHERE uuid = $1)", req.params.uuid)
+
+  // Notify console/log about the retrieved request
+  console.log('Retrieved a request to retrieve a case distribution');
+
+  // Verify input parameters
+  if (!req.params.uuid) {
+    console.log(400, '- Parameter "uuid" missing.');
+    res.send(400, 'Parameter "uuid" missing.');
+    return next();
+  }
+
+  // Notify console/log about the uuid
+  console.log("- uuid:", req.params.uuid);
+
+  // Perform request
+  db.query('SELECT case_name FROM vm_case WHERE vm_id = (SELECT id FROM vm WHERE uuid = $1)', req.params.uuid)
     .then(data => {
-        console.log('DATA:', data); // print data;
-        res.send(data);
-        return data;
+      if (data.length == 0) {
+        console.log('- Distribution not found');
+        res.send(404, 'Distribution not found');
+        return next();
+      }
+      console.log('- Distribution: ', data);
+      res.send(200, data);
+      return data;
     })
     .catch(error => {
-        console.log('ERROR:', error); // print the error;
-        res.send(error);
+      console.log('- Unexpected error occurred', error);
+      res.send(500, error);
     });
+
   return next();
 });
 
 server.post('/dist/:uuid', function (req, res, next) {
-  var vm_id = -1;
-  db.query("INSERT INTO vm(uuid) VALUES ($1)", req.params.uuid)
+
+  // Notify console/log about the retrieved request
+  console.log('Retrieved a request to add a case distribution');
+
+  // Verify input parameters
+  if (!req.params.uuid) {
+    console.log(400, '- Parameter "uuid" missing.');
+    res.send(400, 'Parameter "uuid" missing.');
+    return next();
+  }
+  if (!req.body) {
+    console.log(400, '- Request body missing.');
+    res.send(400, 'Request body missing.');
+    return next();
+  }
+  if (!Array.isArray(req.body)) {
+    console.log(400, '- Request body is not an array.');
+    res.send(400, 'Request body is not an array.');11
+    return next();
+  }
+  if (req.body.length == 0) {
+    console.log(400, '- Request body array empty (length zero).');
+    res.send(400, 'Request body array empty (length zero).');
+    return next();
+  }
+  if (req.body.length != 0) {
+    var chain = Promise.resolve()
+    req.body.forEach(function(row){
+      chain = chain.then(function(){
+        if (!row.case_name) {
+          throw '- Request body array item missing property "case_name"';
+        }
+        if (typeof row.case_name != 'string') {
+          throw '- Request body array item property "case_name" is not a "string".';
+        }
+        if (row.case_name.length == 0) {
+          throw '- Request body array item property "case_name" is empty.';
+        }
+      })
+    });
+    chain.catch(function(error) {
+      console.log(400, error);
+      res.send(400, error);
+      return next();
+    });
+  }
+
+  // Notify console/log about the uuid
+  console.log("- uuid:", req.params.uuid);
+
+  // Perform request
+  db.query('INSERT INTO vm(uuid) VALUES ($1)', req.params.uuid)
     .then(data => {
-      return db.query("SELECT * FROM vm WHERE uuid = $1", req.params.uuid);
+      return db.query('SELECT * FROM vm WHERE uuid = $1', req.params.uuid);
     })
     .then(data => {
-      vm_id = data[0].id;
-      req.body.forEach(function(row) {
-        db.query("INSERT INTO vm_case(vm_id, case_name) VALUES ($1, $2)", [vm_id, row.case_name]);
+      var vm_id = data[0].id;
+      var distribution = req.body;
+      console.log('- Distribution: ', distribution);
+
+      distribution.forEach(function(row) {
+        db.query('INSERT INTO vm_case(vm_id, case_name) VALUES ($1, $2)', [vm_id, row.case_name]);
       });
-      res.send(data);
+      res.send(200, data);
       return data;
     })
     .catch(error => {
-        console.log('ERROR:', error); // print the error;
-        res.send(error);
+      console.log('ERROR:', error);
+      res.send(error);
     });
+
   return next();
 });
 
+server.del('/dist/:uuid', function (req, res, next) {
+
+  // Notify console/log about the retrieved request
+  console.log('Retrieved a request to delete a case distribution');
+
+  // Verify input parameters
+  if (!req.params.uuid) {
+    console.log(400, '- Parameter "uuid" missing.');
+    res.send(400, 'Parameter "uuid" missing.');
+    return next();
+  }
+
+  // Notify console/log about the uuid
+  console.log("- uuid:", req.params.uuid);
+
+  // Perform request
+  db.query('DELETE FROM vm WHERE uuid = $1', req.params.uuid)
+    .then(data => {
+      res.send(200, data);
+      return data;
+    })
+    .catch(error => {
+      console.log('ERROR:', error);
+      res.send(error);
+    });
+
+  return next();
+});
+
+// Start up the server
 server.listen(config.get('General.server.port'), function () {
   console.log('%s listening at %s', server.name, server.url);
 });

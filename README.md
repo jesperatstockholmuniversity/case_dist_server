@@ -34,3 +34,6 @@ $ curl -H 'Content-Type: application/json' -X POST -d '[{"case_name":"Hacker"}, 
 
 ## Example of retrieving the distribution of a specific VM (10.11.11.171).
 $ curl http://localhost:9911/dist/10.11.11.171
+
+## Example of deleting a stored case distribution.
+$ curl -X "DELETE" http://localhost:9911/dist/10.11.11.171

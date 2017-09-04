@@ -9,7 +9,7 @@ GRANT ALL PRIVILEGES ON TABLE vm TO case_dist_server_user;
 GRANT USAGE, SELECT ON SEQUENCE vm_id_seq TO case_dist_server_user;
 
 CREATE TABLE IF NOT EXISTS vm_case (
-  vm_id integer REFERENCES vm (id),
+  vm_id integer REFERENCES vm (id) ON DELETE CASCADE,
   case_name varchar(36) NOT NULL
 );
 GRANT ALL PRIVILEGES ON TABLE vm_case TO case_dist_server_user;
