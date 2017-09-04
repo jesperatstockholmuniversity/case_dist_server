@@ -42,7 +42,7 @@ server.get('/dist/:uuid', function (req, res, next) {
 
   // Perform request
   db.query('SELECT case_name FROM vm_case WHERE vm_id = (SELECT id FROM vm WHERE uuid = $1)', req.params.uuid)
-    .then(data => {
+    .then(function(data) {
       if (data.length == 0) {
         console.log('- Distribution not found');
         res.send(404, {status: 'Error', message: 'Distribution not found'});
@@ -51,7 +51,7 @@ server.get('/dist/:uuid', function (req, res, next) {
       console.log('- Success');
       res.send(200, {status: 'Success', message: data});
     })
-    .catch(error => {
+    .catch(function(error) {
       console.log('-', error);
       res.send(500, {status: 'Error', message: error});
       return next();
@@ -113,17 +113,17 @@ server.post('/dist/:uuid', function (req, res, next) {
   // Perform request
 
   db.query('SELECT * FROM vm WHERE uuid = $1', req.params.uuid)
-    .then(data => {
+    .then(function(data) {
       if (data.length > 0) {
         throw 'Distribution for uuid already exists';
       }
 
       return db.query('INSERT INTO vm(uuid) VALUES ($1)', req.params.uuid);
     })
-    .then(data => {
+    .then(function(data) {
       return db.query('SELECT * FROM vm WHERE uuid = $1', req.params.uuid);
     })
-    .then(data => {
+    .then(function(data) {
       var vm_id = data[0].id;
       var distribution = req.body;
       console.log('- Distribution: ', distribution);
@@ -134,7 +134,7 @@ server.post('/dist/:uuid', function (req, res, next) {
       console.log('- Success');
       res.send(200, {status: 'Success', message: ''});
     })
-    .catch(error => {
+    .catch(function(error) {
       console.log('-', error);
       res.send(400, {status: 'Error', message: error});
       return next();
@@ -160,18 +160,18 @@ server.del('/dist/:uuid', function (req, res, next) {
 
   // Perform request
   db.query('SELECT * FROM vm WHERE uuid = $1', req.params.uuid)
-    .then(data => {
+    .then(function(data) {
       if (data.length == 0) {
         throw 'Distribution not found';
       }
 
       return db.query('DELETE FROM vm WHERE uuid = $1', req.params.uuid);
     })
-    .then(data => {
+    .then(function(data) {
       console.log('- Success');
       res.send(200, {status: 'Success', message: ''});
     })
-    .catch(error => {
+    .catch(function(error) {
       console.log('-', error);
       res.send(400, {status: 'Error', message: error});
       return next();
