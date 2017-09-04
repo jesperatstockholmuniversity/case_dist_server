@@ -111,7 +111,15 @@ server.post('/dist/:uuid', function (req, res, next) {
   console.log("- uuid:", req.params.uuid);
 
   // Perform request
-  db.query('INSERT INTO vm(uuid) VALUES ($1)', req.params.uuid)
+
+  db.query('SELECT * FROM vm WHERE uuid = $1', req.params.uuid)
+    .then(data => {
+      if (data.length > 0) {
+        throw 'Distribution for uuid already exists';
+      }
+
+      return db.query('INSERT INTO vm(uuid) VALUES ($1)', req.params.uuid);
+    })
     .then(data => {
       return db.query('SELECT * FROM vm WHERE uuid = $1', req.params.uuid);
     })
@@ -127,7 +135,7 @@ server.post('/dist/:uuid', function (req, res, next) {
       res.send(200, 'Success');
     })
     .catch(error => {
-      console.log('- Unexpected error occurred', error);
+      console.log('-', error);
       res.send(400, error);
       return next();
     });
@@ -151,13 +159,20 @@ server.del('/dist/:uuid', function (req, res, next) {
   console.log("- uuid:", req.params.uuid);
 
   // Perform request
-  db.query('DELETE FROM vm WHERE uuid = $1', req.params.uuid)
+  db.query('SELECT * FROM vm WHERE uuid = $1', req.params.uuid)
+    .then(data => {
+      if (data.length == 0) {
+        throw 'Distribution not found';
+      }
+
+      return db.query('DELETE FROM vm WHERE uuid = $1', req.params.uuid);
+    })
     .then(data => {
       console.log('- Success');
       res.send(200, 'Success');
     })
     .catch(error => {
-      console.log('- Unexpected error occurred', error);
+      console.log('-', error);
       res.send(400, error);
       return next();
     });
