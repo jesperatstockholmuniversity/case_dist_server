@@ -25,6 +25,16 @@ server.get('/ip', function (req, res, next) {
   return next();
 });
 
+server.get('/seed', function (req, res, next) {
+
+  // Notify console/log about the retrieved request
+  console.log('Retrieved a request to seed the database');
+
+  console.log(501, '- This endpoint has not yet been implemented.');
+  res.send(501, {status: 'Error', message: 'This endpoint has not yet been implemented'});
+  return next();
+});
+
 server.get('/dist/:uuid', function (req, res, next) {
 
   // Notify console/log about the retrieved request
