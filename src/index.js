@@ -15,8 +15,13 @@ server.get('/echo/:name', function (req, res, next) {
   return next();
 });
 
+/* Get client IP v4 address */
 server.get('/ip', function (req, res, next) {
-  res.send(200, 'You\'re calling from: ' + req.connection.remoteAddress);
+  var ip = req.connection.remoteAddress;
+  var ipv4 = ip.replace(/f/gi, '');
+  ipv4 = ipv4.replace(/:/gi, '');
+  res.send("You call: " + ipv4);
+  // res.send("You're calling from: " + req.connection.remoteAddress);
   return next();
 });
 
