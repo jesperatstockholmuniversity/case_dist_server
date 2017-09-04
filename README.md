@@ -5,7 +5,7 @@ SITE4SEFO Case Distribution Server
 2. Copy and configure: 'default.json.template' as 'default.json'.
 3. Copy and configure: 'production.json.template' as 'production.json'.
 4. Run "node src/index.js" to start server.
-
+5. Run the unit tests from another terminal "npm test"
 
 ## Setup a database
 $ sudo su postgres
@@ -22,18 +22,19 @@ $ \q
 ### If this does not work due to "FATAL: Peer authentication....", try:
 $ psql -U someuser -h 127.0.0.1 database 
 
-## Seed the database
+
+### Seed the database
 $ sudo su postgres
 $ psql case_dist_server < database_seeds/postgres/seed.sql
 
 
-# Playing with curl
+## Playing with curl
 
-## Example of notifying the Case Distribution Server about a new VM (10.11.11.171).
+### Example of notifying the Case Distribution Server about a new VM (10.11.11.171).
 $ curl -H 'Content-Type: application/json' -X POST -d '[{"case_name":"Hacker"}, {"case_name":"DDOS"}]' http://localhost:9911/dist/10.11.11.171
 
-## Example of retrieving the distribution of a specific VM (10.11.11.171).
+### Example of retrieving the distribution of a specific VM (10.11.11.171).
 $ curl http://localhost:9911/dist/10.11.11.171
 
-## Example of deleting a stored case distribution.
+### Example of deleting a stored case distribution.
 $ curl -X "DELETE" http://localhost:9911/dist/10.11.11.171
