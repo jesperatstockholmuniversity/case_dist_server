@@ -30,8 +30,28 @@ server.get('/seed', function (req, res, next) {
   // Notify console/log about the retrieved request
   console.log('Retrieved a request to seed the database');
 
-  console.log(501, '- This endpoint has not yet been implemented.');
-  res.send(501, {status: 'Error', message: 'This endpoint has not yet been implemented'});
+  // Perform request
+  try {
+    var fs = require('fs');
+    var sql = fs.readFileSync(config.get('Database.postgres.seed')).toString();
+    db.query(sql)
+      .then(function() {
+        console.log('- Success');
+        res.send(200, {status: 'Success', message: ''});
+      })
+      .catch(function(error) {
+        console.log('-', error);
+        res.send(500, {status: 'Error', message: error});
+      });
+  } catch (error) {
+    if (error.errno == -2) {
+      error = "Make sure that your config contained the absolute path to the database seed file."
+    }
+    
+    console.log('-', error);
+    res.send(500, {status: 'Error', message: error});
+  }
+
   return next();
 });
 
